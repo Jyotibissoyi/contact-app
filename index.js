@@ -35,23 +35,6 @@ app.listen(3000, () => console.log('Express server is runnig at port no : 3000')
 //------------------------------------------<  API  >----------------------------------------------- 
 
 
-
-
-//------>Insert an Contactss
-// app.post('/Contacts', (req, res) => {
-//     let emp = req.body;
-//     var sql = "SET contacts_id=? ;SET first_name = ?;SET last_name = ?;SET email = ?;SET mobile_No = ?; \
-//     CALL contactsAddOrEdit(@contacts_id,@first_name,@last_name,@email,@mobile_No);";
-//     mysqlConnection.query(sql, [emp.contacts_id, emp.first_name, emp.last_name, emp.email, emp.mobile_No], (err, rows, fields) => {
-//         if (!err)
-//             rows.forEach(element => {
-//                 if(element.constructor == Array)
-//                 res.send('Inserted Contacts id : '+element[0].EmpID);
-//             });
-//         else
-//             console.log(err);
-//     })
-// });
 //create contact
 app.post('/Contacts', (req, res) => {
     let emp = req.body;
@@ -93,7 +76,7 @@ mysqlConnection.query('DELETE FROM Contacts WHERE contacts_id = ?', [req.params.
 
 
 
-//Update an Contactss
+//Update an Contacts
 app.put('/Contacts', (req, res) => {
     let emp = req.body;
     var sql = "CALL ContactsAddOrEdit(?, ?, ?, ?, ?);";
