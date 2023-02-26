@@ -31,12 +31,18 @@ app.listen(3000, () => console.log('Express server is runnig at port no : 3000')
 
 
 
-//Insert an Contactss
+
+//------------------------------------------<  API  >----------------------------------------------- 
+
+
+
+
+//------>Insert an Contactss
 // app.post('/Contacts', (req, res) => {
 //     let emp = req.body;
-//     var sql = "SET first_name = ?;SET last_name = ?;SET email = ?;SET mobile = ?; \
-//     CALL ContactsAddOrEdit(@EmpID,@Name,@EmpCode,@Salary);";
-//     mysqlConnection.query(sql, [emp.EmpID, emp.Name, emp.EmpCode, emp.Salary], (err, rows, fields) => {
+//     var sql = "SET contacts_id=? ;SET first_name = ?;SET last_name = ?;SET email = ?;SET mobile_No = ?; \
+//     CALL contactsAddOrEdit(@contacts_id,@first_name,@last_name,@email,@mobile_No);";
+//     mysqlConnection.query(sql, [emp.contacts_id, emp.first_name, emp.last_name, emp.email, emp.mobile_No], (err, rows, fields) => {
 //         if (!err)
 //             rows.forEach(element => {
 //                 if(element.constructor == Array)
@@ -46,71 +52,60 @@ app.listen(3000, () => console.log('Express server is runnig at port no : 3000')
 //             console.log(err);
 //     })
 // });
-
-
-
-//Get all Contactss
-app.get('/Contactss', (req, res) => {
-    mysqlConnection.query('SELECT * FROM Contacts', (err, rows, fields) => {
-        if (!err)
-            res.send(rows);
-        else
+//create contact
+app.post('/Contacts', (req, res) => {
+    let emp = req.body;
+    var sql = "CALL ContactsAddOrEdit(?, ?, ?, ?, ?);";
+    mysqlConnection.query(sql, [emp.contacts_id, emp.first_name, emp.last_name, emp.email, emp.mobile_No], (err, rows, fields) => {
+        if (!err) {
+            rows.forEach(row => {
+                if (row.constructor == Array) {
+                    res.send('Inserted Contacts id: ' + row[0].contacts_id);
+                }
+            });
+        } else {
             console.log(err);
-    })  
+            res.status(500).send({ msg: err.message });
+        }
+    });
 });
 
 //Get an Contactss
 app.get('/Contacts/:id', (req, res) => {
-    mysqlConnection.query('SELECT * FROM Contacts WHERE EmpID = ?', [req.params.id], (err, rows, fields) => {
+    mysqlConnection.query('SELECT * FROM Contacts WHERE contacts_id = ?', [req.params.id], (err, rows, fields) => {
         if (!err)
             res.send(rows);
         else
             console.log(err);
     })
-});
-
-//Delete an Contactss
+})
+ 
+//Delete an Contacts
 app.delete('/Contacts/:id', (req, res) => {
-    mysqlConnection.query('DELETE FROM Contacts WHERE EmpID = ?', [req.params.id], (err, rows, fields) => {
-        if (!err)
-            res.send('Deleted successfully.');
-        else
-            console.log(err);
-    })
-});
+mysqlConnection.query('DELETE FROM Contacts WHERE contacts_id = ?', [req.params.id], (err, rows, fields) => {
+    if (!err)
+        res.send("delete successfully");
+    else
+        console.log(err);
+})
+})
+
 
 
 
 //Update an Contactss
 app.put('/Contacts', (req, res) => {
     let emp = req.body;
-    var sql = "SET @EmpID = ?;SET @Name = ?;SET @EmpCode = ?;SET @Salary = ?; \
-    CALL ContactsAddOrEdit(@EmpID,@Name,@EmpCode,@Salary);";
-    mysqlConnection.query(sql, [emp.EmpID, emp.Name, emp.EmpCode, emp.Salary], (err, rows, fields) => {
-        if (!err)
-            res.send('Updated successfully');
+    var sql = "CALL ContactsAddOrEdit(?, ?, ?, ?, ?);";
+    mysqlConnection.query(sql, [emp.contacts_id, emp.first_name, emp.last_name, emp.email, emp.mobile_No], (err, rows, fields) => {
+        if (!err) {
+            res.send('Updated successfully');}
         else
             console.log(err);
     })
 });
 
 
-//order post api 
-
-app.post('/Contacts', (req, res) => {
-
-    let data = req.body
-    let { first_name, last_name, email, mobile } = data
-
-
-    mysqlConnection.query("INSERT INTO Contacts SET = ?", { first_name: first_name, last_name:last_name , email: email, mobile :mobile }, (err, results) => {
-        if (err) {
-            console.log(err);
-        } else {
-            return res.send(results);
-        }
-    })
-})
 
 
 
